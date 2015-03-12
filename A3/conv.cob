@@ -1,0 +1,91 @@
+identification division.
+program-id. conv.
+environment division.
+input-output section.
+file-control.
+    select standard-output assign to display.
+
+data division.
+file section.
+fd standard-output.
+    01 stdout-record  picture x(80).
+
+working-storage section.
+77  i    picture s99 usage is computational.
+77  prev picture s9(8) usage is computational.
+77  current-val    picture s9(4) usage is computational.
+01 error-mess.
+    02 filler picture x(22) value ' illegal roman numeral'.
+
+linkage section.
+77  input-len    picture s99 usage is computational.
+77  err  picture s9 usage is computational-3.
+77  sum1 picture s9(8) usage is computational.
+01  array-area.
+    02 s picture x(1) occurs 30 times.
+
+procedure division using array-area, input-len, err, sum1.
+    move zero to sum1. 
+    move 1001 to prev.
+    
+    perform loop thru end-loop varying i from 1 by 1
+       until i is equals input-len.
+loop.
+    move 1 to err
+    if s(i) is equal to 'i' or s(i) is equal to 'I'
+        move 1 to current-val
+        move 0 to err
+    end-if.
+    
+    if s(i) is equal to 'v' or s(i) is equal to 'V'
+        move 5 to current-val
+        move 0 to err
+    end-if.
+    
+    if s(i) is equal to 'x' or s(i) is equal to 'X'
+        move 10 to current-val
+        move 0 to err
+    end-if.
+    
+    if s(i) is equal to 'l' or s(i) is equal to 'L'
+        move 50 to current-val
+        move 0 to err
+    end-if.
+    
+    if s(i) is equal to 'c' or s(i) is equal to 'C'
+        move 100 to current-val
+        move 0 to err
+    end-if.
+    
+    if s(i) is equal to 'd' or s(i) is equal to 'D'
+        move 500 to current-val
+        move 0 to err
+    end-if.
+    
+    if s(i) is equal to 'm' or s(i) is equal to 'M'
+        move 1000 to current-val
+        move 0 to err
+    end-if.
+    
+    if i greater than input-len
+	goback.
+
+    if err equal to 1
+        open output standard-output
+        write stdout-record from error-mess after advancing 1 line
+
+        close standard-output
+	goback
+    end-if.
+
+    
+
+    add current-val to sum1.
+    if current-val is greater than prev
+       compute sum1 = sum1 - 2 * prev.
+    move current-val to prev.
+    
+    
+end-loop.
+    
+b8. goback. 
